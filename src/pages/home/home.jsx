@@ -89,10 +89,10 @@ const Home = (props) => {
                 </Menu>
             </Header>
             <Layout style={{ height: '100%' }}>
-                <Sider width={200} height={'100%'} className="site-layout-background">
+                <Sider trigger={null}  collapsible width={200} collapsed={collapsed} height={'100%'} className="site-layout-background">
                     {/* <Nav></Nav> */}
-                    {/* <div onClick={toggleCollapsed} style={{ height: '4%', color: '#fff', fontSize: '24px', textAlign: 'center' }}>|  |  |</div> */}
-                    <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} inlineCollapsed={collapsed} onOpenChange={onOpenChange} onClick={onItemClick} style={{ width: 200, height: '96%' }}>
+                    <div onClick={toggleCollapsed} style={{ color: '#fff', fontSize: '24px', textAlign: 'center' }}>|  |  |</div>
+                    <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} onOpenChange={onOpenChange} onClick={onItemClick} style={{ height: '96%' }}>
                         {/* <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
                             <Menu.Item key="/mine">
                                 <Link to={{ pathname: "/mine", state: { id: 1 } }}>mine</Link>
