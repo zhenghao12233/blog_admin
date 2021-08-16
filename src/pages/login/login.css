@@ -1,0 +1,13 @@
+.login-box {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+}
+.login-box section {
+    background: #fff;
+    border-radius: 20px;
+    width: 500px;
+    margin:100px auto;
+    padding: 30px;
+}
