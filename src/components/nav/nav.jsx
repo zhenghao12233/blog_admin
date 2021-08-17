@@ -6,8 +6,18 @@ import {withRouter,Link } from 'react-router-dom';
 import menuList from '../../config/menu'
 const { Meta } = Card;
 const { SubMenu } = Menu;
-// const rootSubmenuKeys = ['sub1', 'sub2', 'sub3','sub4'];
-const rootSubmenuKeys = ['sub1', 'sub2', 'sub3','sub4','sub5'];
+
+// 确保打开唯一map写法
+// let rootSubmenuKeys = []
+// menuList.map((item,index) => {
+//     rootSubmenuKeys.push(item.key)
+// });
+// 确保打开唯一reduce写法
+const rootSubmenuKeys = menuList.reduce((pre,cur) => {
+    pre.push(cur.key)
+    return pre
+},[])
+
 const Nav = (props) => {
     console.log('Nav',props)
     const [openKeys, setOpenKeys] = useState([]);
@@ -25,7 +35,7 @@ const Nav = (props) => {
                     setOpenKeys([item.key])
                 }
                 return (
-                    <SubMenu key={item.key} icon={<SettingOutlined />} title={item.title}>
+                    <SubMenu key={item.key} icon={ item.icon } title={item.title}>
                         {
                             creatMenu(item.children)
                         }
@@ -33,7 +43,7 @@ const Nav = (props) => {
                 )
             } else {
                 return (
-                    <Menu.Item key={item.key} icon={<MailOutlined />}>
+                    <Menu.Item key={item.key} icon={ item.icon }>
                         <Link to={item.key}>{item.title}</Link>
                     </Menu.Item>
                 )
@@ -42,11 +52,11 @@ const Nav = (props) => {
     }
 
     const onOpenChange = keys => {
-        console.log(keys)
+        // console.log(keys)
         // 满足条件，返回第一个，不满足则undefined
         const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1);
-        console.log(latestOpenKey)
-        console.log(rootSubmenuKeys.indexOf(latestOpenKey) === -1)
+        // console.log(latestOpenKey)
+        // console.log(rootSubmenuKeys.indexOf(latestOpenKey) === -1)
         if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
             setOpenKeys(keys);
             console.log(openKeys)
@@ -56,14 +66,13 @@ const Nav = (props) => {
     };
     
     const onItemClick = (item, key, keyPath, domEvent) => {
-        console.log(item, key, keyPath, domEvent)
+        // console.log(item, key, keyPath, domEvent)
         setSelectKeys(item.key)
     }
 
 
     return (
-        <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} onOpenChange={onOpenChange} style={{ height: '96%' }}>
-            {/* {creatMenu()} */}
+        <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} onOpenChange={onOpenChange} onClick={onItemClick}  style={{ height: '96%' }}>
             {nodes}
         </Menu>
     );

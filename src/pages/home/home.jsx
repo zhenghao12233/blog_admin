@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Breadcrumb,Tag } from 'antd';
-import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb,Tag,Button,Row,Col } from 'antd';
+import { MailOutlined, AppstoreOutlined, SettingOutlined, PoweroffOutlined  } from '@ant-design/icons';
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import memory from '../../utils/memoryUtils'
 // import Mine from '../mine/mine'
 // import Self from '../self/self'
-// import Editors from '../editor/editor'
+import Editors from '../editor/editor'
 // import Test from '../test/test'
 import Nav from '../../components/nav/nav'
+import Welcome from '../../components/Welcome/Welcome'
 import menuList from '../../config/menu'
 
 const { SubMenu } = Menu;
@@ -19,6 +20,7 @@ const Home = (props) => {
     const [selectKeys, setSelectKeys] = useState(props.location.pathname);
     const [collapsed, setCollapsed] = useState(false)
     const [nodes, setNodes] = useState()
+    const [loadings,setLoadings] = useState(false)
 
     const user = memory.user
     if (!user || !user.username) {
@@ -78,15 +80,35 @@ const Home = (props) => {
         console.log(collapsed)
     }
 
+    const enterLoading = index => {
+          setLoadings(true)
+          memory.user = {}
+          window.localStorage.removeItem('user')
+          props.history.push("/")
+          
+    }
+
     return (
         <Layout style={{ height: "100%" }}>
-            <Header className="header">
-                <div className="logo" />
-                <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
+            <Header className="header" style={{padding: '0 20px'}}>
+                {/* <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
                     <Menu.Item key="1">nav 1</Menu.Item>
                     <Menu.Item key="2">nav 2</Menu.Item>
                     <Menu.Item key="3">nav 3</Menu.Item>
-                </Menu>
+                </Menu> */}
+                 <Row justify="space-between">
+                    <Col span={4}><span style={{color: '#fff'}}>欢迎来到博客后台管理</span></Col>
+                    <Col span={2} >
+                        <Button
+                        type="primary"
+                        icon={<PoweroffOutlined />}
+                        loading={loadings}
+                        onClick={() => enterLoading(0)}
+                        >
+                        退出登录
+                    </Button>
+                    </Col>
+                </Row>
             </Header>
             <Layout style={{ height: '100%' }}>
                 <Sider trigger={null}  collapsible width={200} collapsed={collapsed} height={'100%'} className="site-layout-background">
@@ -141,12 +163,13 @@ const Home = (props) => {
                     >
                         <Switch>
                             {/* 默认匹配Mine组件 */}
-                            {/* <Route path="/" exact component={Mine}></Route> */}
+                            <Route path="/" exact component={Welcome}></Route>
                             {/* <Route path={`${props.match.path}mine`} component={Mine}></Route> */}
                             {/* <Route path={`${props.match.path}self`} component={Self}></Route> */}
-                            {/* <Route path={`${props.match.path}test`} component={Test}></Route> */}
-                            {/* <Route path={`${props.match.path}editor`} component={Editors}></Route> */}
-                            <Redirect to="/mine"></Redirect>
+                            <Route path={`${props.match.path}add`} component={Editors}></Route>
+                            <Route path={`${props.match.path}edit`} component={Editors}></Route>
+                            
+                            <Redirect to="/"></Redirect>
                         </Switch>
                     </Content>
                 </Layout>
