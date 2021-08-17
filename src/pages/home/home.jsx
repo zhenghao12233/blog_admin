@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb,Tag } from 'antd';
 import { MailOutlined, AppstoreOutlined, SettingOutlined } from '@ant-design/icons';
 import { Switch, Route, Link, Redirect } from 'react-router-dom'
 import memory from '../../utils/memoryUtils'
-import Mine from '../mine/mine'
+// import Mine from '../mine/mine'
 // import Self from '../self/self'
 // import Editors from '../editor/editor'
 // import Test from '../test/test'
@@ -92,7 +92,7 @@ const Home = (props) => {
                 <Sider trigger={null}  collapsible width={200} collapsed={collapsed} height={'100%'} className="site-layout-background">
                     {/* <Nav></Nav> */}
                     <div onClick={toggleCollapsed} style={{ color: '#fff', fontSize: '24px', textAlign: 'center' }}>|  |  |</div>
-                    <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} onOpenChange={onOpenChange} onClick={onItemClick} style={{ height: '96%' }}>
+                    {/* <Menu mode="inline" openKeys={openKeys} selectedKeys={selectKeys} onOpenChange={onOpenChange} onClick={onItemClick} style={{ height: '96%' }}> */}
                         {/* <SubMenu key="sub1" icon={<MailOutlined />} title="Navigation One">
                             <Menu.Item key="/mine">
                                 <Link to={{ pathname: "/mine", state: { id: 1 } }}>mine</Link>
@@ -119,8 +119,9 @@ const Home = (props) => {
                             <Menu.Item key="11">Option 11</Menu.Item>
                             <Menu.Item key="12">Option 12</Menu.Item>
                         </SubMenu> */}
-                        {nodes}
-                    </Menu>
+                        {/* {nodes} */}
+                        <Nav/>
+                    {/* </Menu> */}
                 </Sider>
                 <Layout style={{ padding: '0 0px 24px' }}>
                     {/* <Breadcrumb style={{ margin: '16px 24px' }}>
@@ -141,7 +142,7 @@ const Home = (props) => {
                         <Switch>
                             {/* 默认匹配Mine组件 */}
                             {/* <Route path="/" exact component={Mine}></Route> */}
-                            <Route path={`${props.match.path}mine`} component={Mine}></Route>
+                            {/* <Route path={`${props.match.path}mine`} component={Mine}></Route> */}
                             {/* <Route path={`${props.match.path}self`} component={Self}></Route> */}
                             {/* <Route path={`${props.match.path}test`} component={Test}></Route> */}
                             {/* <Route path={`${props.match.path}editor`} component={Editors}></Route> */}
