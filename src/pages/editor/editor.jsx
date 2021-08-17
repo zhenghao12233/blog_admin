@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Layout, Menu, Breadcrumb, Tag, message } from 'antd';
+import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input   } from 'antd';
 import E from 'wangeditor'
+const { Link, BrowserRouter, Route, Switch, Redirect,HashRouter } = require('react-router-dom')
 // https://www.wangeditor.com/doc/
-const Editors = () => {
+const Editors = (props) => {
 
     const [domString,setDomString] = useState('11')
-
+    
     useEffect(() => {
         // const elemMenu = editorElemMenu;
         // const elemBody = editorElemBody;
@@ -15,7 +16,7 @@ const Editors = () => {
         editor.config.height = 500
         // 设置层级
         editor.config.zIndex = 500
-        editor.config.placeholder = '自定义 placeholder 提示文字'
+        editor.config.placeholder = '请输入'
         editor.config.focus = false
         // 自定义alert提示, 以 Ant Design 为例
         editor.config.customAlert = function (s, t) {
@@ -128,13 +129,26 @@ const Editors = () => {
     return (
 
         <div>
+            <Breadcrumb>
+                <Breadcrumb.Item>
+                    <Link to="/home">首页</Link>
+                </Breadcrumb.Item>
+                <Breadcrumb.Item>
+                    <Link>
+                        {props.match.path == '/add' ? '添加文章' : '编辑文章'}
+                    </Link>
+                </Breadcrumb.Item>
+            </Breadcrumb>,
+            <Row>
+                
+            </Row>
             {/* 1、菜单栏与主题栏分离模式 */}
             <div id="editBox">
                 {/* <p>初始化的内容</p>
             <p>初始化的内容</p> */}
             </div>
             <div dangerouslySetInnerHTML={{ __html: domString }} />
-
+            
         </div>
 
     );
