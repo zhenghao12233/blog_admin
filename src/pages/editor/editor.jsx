@@ -1,12 +1,58 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input   } from 'antd';
+import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input, Card, Select, Upload, Modal } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import E from 'wangeditor'
-const { Link, BrowserRouter, Route, Switch, Redirect,HashRouter } = require('react-router-dom')
+const { Link, BrowserRouter, Route, Switch, Redirect, HashRouter } = require('react-router-dom')
+const { TextArea } = Input;
+const { Option } = Select;
 // https://www.wangeditor.com/doc/
 const Editors = (props) => {
 
-    const [domString,setDomString] = useState('11')
-    
+    const [domString, setDomString] = useState('11')
+
+    const [fileList, setFileLIst] = useState([
+        {
+            uid: '-1',
+            name: 'image.png',
+            status: 'done',
+            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+        {
+            uid: '-2',
+            name: 'image.png',
+            status: 'done',
+            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+        {
+            uid: '-3',
+            name: 'image.png',
+            status: 'done',
+            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+        {
+            uid: '-4',
+            name: 'image.png',
+            status: 'done',
+            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+        {
+            uid: '-xxx',
+            percent: 50,
+            name: 'image.png',
+            status: 'uploading',
+            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+        {
+            uid: '-5',
+            name: 'image.png',
+            status: 'error',
+        },
+    ])
+
+    const [ previewVisible, setPreviewVisible ] = useState(false)
+    const [previewTitle,setPreviewTitle] = useState(null)
+    const [ previewImage, setPreviewImage ] = useState(null)
+
     useEffect(() => {
         // const elemMenu = editorElemMenu;
         // const elemBody = editorElemBody;
@@ -125,6 +171,45 @@ const Editors = (props) => {
         editor.txt.clear()
     }, [])
 
+    const onTextAreaChange = (e) => {
+        console.log('Change:', e.target.value);
+    }
+    const uploadButton = (
+        <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+        </div>
+    )
+    const handleChange = (e) => {
+        console.log(e)
+        setFileLIst([...e.fileList])
+        console.log(11)
+    }
+    const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = error => reject(error);
+        });
+      }
+    const handleCancel = () => {
+        setPreviewVisible(false)
+    };
+
+    const handlePreview = async file => {
+      if (!file.url && !file.preview) {
+        file.preview = await getBase64(file.originFileObj);
+      }
+      setPreviewVisible(true)
+      setPreviewImage(file.url || file.preview)
+      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
+    //   this.setState({
+    //     previewImage: file.url || file.preview,
+    //     previewVisible: true,
+    //     previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+    //   });
+    };
 
     return (
 
@@ -138,17 +223,71 @@ const Editors = (props) => {
                         {props.match.path == '/add' ? '添加文章' : '编辑文章'}
                     </Link>
                 </Breadcrumb.Item>
-            </Breadcrumb>,
-            <Row>
-                
-            </Row>
-            {/* 1、菜单栏与主题栏分离模式 */}
-            <div id="editBox">
-                {/* <p>初始化的内容</p>
-            <p>初始化的内容</p> */}
-            </div>
+            </Breadcrumb>
+            <Card>
+                <Row align="middle" style={{ marginBottom: '20px' }}>
+                    <Col span={1}>文章标题</Col>
+                    <Col span={9}>
+                        <Input placeholder="Basic usage" />
+                    </Col>
+                </Row>
+                <Row align="start">
+                    <Col span={1}>文章简介</Col>
+                    <Col span={23}>
+                        <TextArea showCount maxLength={100} onChange={onTextAreaChange} />
+                    </Col>
+                </Row>
+
+                <Row align="middle" style={{ marginBottom: '20px' }}>
+                    <Col span={1}>选择分类</Col>
+                    <Select
+                        showSearch
+                        style={{ width: 200 }}
+                        placeholder="选择分类"
+                        optionFilterProp="children"
+                    // onChange={onChange}
+                    // onFocus={onFocus}
+                    // onBlur={onBlur}
+                    // onSearch={onSearch}
+                    // filterOption={(input, option) =>
+                    //     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    // }
+                    >
+                        <Option value="1">技术分享</Option>
+                        <Option value="2">算法解析</Option>
+                        <Option value="3">程序人生</Option>
+                    </Select>,
+                </Row>
+                <Row>
+                    <Col span={24}>上传图片</Col>
+                    <Upload
+                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        listType="picture-card"
+                        fileList={fileList}
+                        multiple
+                        onPreview={handlePreview}
+                        onChange={handleChange}
+                    >
+                        {fileList.length >= 8 ? null : uploadButton}
+                    </Upload>
+                </Row>
+                <Modal
+                    visible={previewVisible}
+                    title={previewTitle}
+                    footer={null}
+                    onCancel={handleCancel}
+                >
+                    <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                </Modal>
+                {/* 1、菜单栏与主题栏分离模式 */}
+                <div id="editBox">
+                    {/* <p>初始化的内容</p>
+                    <p>初始化的内容</p> */}
+                </div>
+            </Card>
+
             <div dangerouslySetInnerHTML={{ __html: domString }} />
-            
+
         </div>
 
     );

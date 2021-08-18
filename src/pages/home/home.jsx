@@ -10,6 +10,7 @@ import Editors from '../editor/editor'
 import Nav from '../../components/nav/nav'
 import Welcome from '../../components/Welcome/Welcome'
 import menuList from '../../config/menu'
+import List from '../list/list'
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
@@ -165,7 +166,7 @@ const Home = (props) => {
                             {/* 默认匹配Mine组件 */}
                             <Route path="/" exact component={Welcome}></Route>
                             {/* <Route path={`${props.match.path}mine`} component={Mine}></Route> */}
-                            {/* <Route path={`${props.match.path}self`} component={Self}></Route> */}
+                            <Route path={`${props.match.path}list`} component={List}></Route>
                             <Route path={`${props.match.path}add`} component={Editors}></Route>
                             <Route path={`${props.match.path}edit`} component={Editors}></Route>
                             
