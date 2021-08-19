@@ -129,6 +129,7 @@ class List extends React.Component {
                 id: 1,
                 title: 'John Brown',
                 date: 32,
+                type: '技术分享',
                 content: 'New York No. 1 Lake Park',
             },
             {
@@ -136,6 +137,7 @@ class List extends React.Component {
                 id: 2,
                 title: 'Joe Black',
                 date: 42,
+                type: '程序人生',
                 content: 'London No. 1 Lake Park',
             },
             {
@@ -143,6 +145,7 @@ class List extends React.Component {
                 id: 3,
                 title: 'Jim Green',
                 date: 32,
+                type: '算法解析',
                 content: 'Sidney No. 1 Lake Park',
             },
             {
@@ -150,6 +153,7 @@ class List extends React.Component {
                 id: 4,
                 title: 'Disabled User',
                 date: 32,
+                type: '程序人生',
                 content: 'Not Expandable',
             },
         ],
@@ -175,7 +179,7 @@ class List extends React.Component {
                     ref={node => {
                         this.searchInput = node;
                     }}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={`搜索关键词`}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
@@ -189,10 +193,10 @@ class List extends React.Component {
                         size="small"
                         style={{ width: 90 }}
                     >
-                        Search
+                        确定
           </Button>
                     <Button onClick={() => this.handleReset(clearFilters)} size="small" style={{ width: 90 }}>
-                        Reset
+                        重置
           </Button>
                     <Button
                         type="link"
@@ -205,7 +209,7 @@ class List extends React.Component {
                             });
                         }}
                     >
-                        Filter
+                        筛选
           </Button>
                 </Space>
             </div>
@@ -268,6 +272,12 @@ class List extends React.Component {
                 width: '30%',
                 fixed: 'left',
                 ...this.getColumnSearchProps('title'),
+            }, {
+                align: 'center',
+                title: '类别',
+                dataIndex: 'type',
+                key: 'type',
+                ...this.getColumnSearchProps('type'),
             },
             {
                 align: 'center',
@@ -276,7 +286,7 @@ class List extends React.Component {
                 key: 'date',
                 width: '20%',
                 ...this.getColumnSearchProps('date'),
-                sorter: (a, b) => a.age - b.age,
+                sorter: (a, b) => a.date - b.date,
                 sortDirections: ['descend', 'ascend'],
             },
             {
@@ -334,7 +344,7 @@ class List extends React.Component {
                     }}
                     bordered
                     columns={columns}
-                    scroll={{ x: 1500, y: 300 }}
+                    scroll={{ x: 1500, y: 900 }}
                     dataSource={this.state.data}
                     pagination={{ total: 85, defaultPageSize: 20, onChange: this.onPageChange }}
                 />
