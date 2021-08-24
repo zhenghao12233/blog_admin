@@ -20,9 +20,9 @@ const App = () => {
         {/* <Route path="/life" {...obj} component={Life}></Route>
             <Route path="/self" component={Self}></Route> */}
         {/* <Route exact path="/comp2" component={Comp2}></Route>  */}
-        <Route path="/login" component={Login}></Route>
-        <Route path="/" component={Home} ></Route>
-
+        <Route path="/manage/login" component={Login}></Route>
+        <Route path="/manage" component={Home} ></Route>
+        <Redirect to="/manage"></Redirect>
       </Switch>
 
     </HashRouter>

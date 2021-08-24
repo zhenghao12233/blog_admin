@@ -1,59 +1,75 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input, Card, Select, Upload, Modal } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input, Card, Select, Upload, Modal, Button } from 'antd';
+import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import E from 'wangeditor'
+import { baseURL } from '../../config/setting'
+import { saveArticle, findAllById } from '../../api/ajax'
+import qs from 'querystring'
+
 const { Link, BrowserRouter, Route, Switch, Redirect, HashRouter } = require('react-router-dom')
 const { TextArea } = Input;
 const { Option } = Select;
+
 // https://www.wangeditor.com/doc/
 const Editors = (props) => {
 
+    const [aid, setAid] = useState(null)
     const [domString, setDomString] = useState('11')
 
     const [fileList, setFileLIst] = useState([
-        {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-2',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-3',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-4',
-            name: 'image.png',
-            status: 'done',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-xxx',
-            percent: 50,
-            name: 'image.png',
-            status: 'uploading',
-            url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-        {
-            uid: '-5',
-            name: 'image.png',
-            status: 'error',
-        },
+        // {
+        //     uid: '-1',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-2',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-3',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-4',
+        //     name: 'image.png',
+        //     status: 'done',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-xxx',
+        //     percent: 50,
+        //     name: 'image.png',
+        //     status: 'uploading',
+        //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        // },
+        // {
+        //     uid: '-5',
+        //     name: 'image.png',
+        //     status: 'error',
+        // },
     ])
 
-    const [ previewVisible, setPreviewVisible ] = useState(false)
-    const [previewTitle,setPreviewTitle] = useState(null)
-    const [ previewImage, setPreviewImage ] = useState(null)
+    const [previewVisible, setPreviewVisible] = useState(false)
+    const [previewTitle, setPreviewTitle] = useState(null)
+    const [previewImage, setPreviewImage] = useState(null)
+
+    const [loadings, setLoadings] = useState([])
+    const title = useRef(null)
+    const [fillTitle, setFillTitle] = useState("")
+    const content = useRef(null)
+    const [fillContent, setFillContent] = useState("")
+    const [article, setArticle] = useState("")
+    const [type, setType] = useState([])
 
     useEffect(() => {
+        const query = qs.parse(props.location.search.substr(1))
+        console.log("query参数", query)
         // const elemMenu = editorElemMenu;
         // const elemBody = editorElemBody;
         // var E = window.wangEditor;
@@ -93,7 +109,7 @@ const Editors = (props) => {
             console.log(editor.txt.text())
             // 获取html
             console.log(editor.txt.html())
-
+            setArticle(editor.txt.html())
             setDomString(editor.txt.html())
 
             // 获取json
@@ -160,16 +176,61 @@ const Editors = (props) => {
             '#800080'
         ]
         editor.config.uploadImgShowBase64 = true
-        editor.config.uploadImgServer = '/upload-img'
+        editor.config.uploadImgServer =  baseURL + 'upload'
+        editor.config.uploadImgParams = {
+            alt: 'wangeditor上传的图片描述'
+        }
+        editor.config.uploadFileName = 'myFile'
         editor.create()
         // 写在创建之后
         // 重新设置编辑器内容, 或者直接写在编辑器的div中
-        editor.txt.html("<p>用 JS 设置的内容</p>")
+        // editor.txt.html(article)
         // 创建编辑器之后，可使用 editor.txt.append('<p>追加的内容</p>') 继续追加内容。
-        editor.txt.append('<p>追加的内容</p>')
+        // editor.txt.append('<p>追加的内容</p>')
         // 情况内容
-        editor.txt.clear()
+        // editor.txt.clear()
+
+        if (query.id) {
+            setAid(query.id)
+            // getArticleFun(Number(query.id))
+            findAllById('findAllById', {
+                id: Number(query.id)
+            }).then(res => {
+                console.log("单篇文章", res)
+                if (res.code == 0) {
+                    setFillTitle(res.data.article.title)
+                    setFillContent(res.data.article.content)
+                    setType(Number(res.data.article.type))
+                    setArticle(res.data.article.article)
+                    // {
+                    //     uid: '-3',
+                    //     name: 'image.png',
+                    //     status: 'done',
+                    //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+                    // },
+                    const thumbs = res.data.article.thumb.split(",").reduce((pre,cur,index) => {
+                        let obj = {
+                            uid: '-' + index,
+                            name: cur.substring(cur.indexOf("uploadFiles") + 12),
+                            status: 'done',
+                            url: cur
+                        }
+                        console.log(obj)
+                        pre.push(obj)
+                        return pre
+                    },[])
+
+                    setFileLIst(thumbs)
+                    editor.txt.html(res.data.article.article)
+                } else {
+                    message.error("文章获取失败")
+                }
+            })
+        }
+
+        // editInitFun()
     }, [])
+
 
     const onTextAreaChange = (e) => {
         console.log('Change:', e.target.value);
@@ -187,29 +248,76 @@ const Editors = (props) => {
     }
     const getBase64 = (file) => {
         return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
         });
-      }
+    }
     const handleCancel = () => {
         setPreviewVisible(false)
     };
 
     const handlePreview = async file => {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
-      }
-      setPreviewVisible(true)
-      setPreviewImage(file.url || file.preview)
-      setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
-    //   this.setState({
-    //     previewImage: file.url || file.preview,
-    //     previewVisible: true,
-    //     previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
-    //   });
+        if (!file.url && !file.preview) {
+            file.preview = await getBase64(file.originFileObj);
+        }
+        setPreviewVisible(true)
+        setPreviewImage(file.url || file.preview)
+        setPreviewTitle(file.name || file.url.substring(file.url.lastIndexOf('/') + 1))
+        //   this.setState({
+        //     previewImage: file.url || file.preview,
+        //     previewVisible: true,
+        //     previewTitle: file.name || file.url.substring(file.url.lastIndexOf('/') + 1),
+        //   });
     };
+
+    const enterLoading = index => {
+        const newLoadings = [...loadings];
+        newLoadings[index] = true;
+        setLoadings(newLoadings)
+
+        let thumbs = fileList.reduce((pre, cur) => {
+            console.log(pre)
+            if (cur.status == "done") {
+                pre.push(baseURL + "uploadFiles/" + cur.name)
+            }
+            return pre
+        }, [])
+
+        console.log(thumbs)
+        console.log(title.current.input.defaultValue)
+        console.log(content.current.resizableTextArea.textArea.defaultValue)
+        if (props.match.path == '/manage/add') {
+            // 添加文章
+            saveArticle('saveArticle', {
+                title: title.current.input.defaultValue,
+                content: content.current.resizableTextArea.textArea.defaultValue,
+                article: article,
+                type: type,
+                thumb: thumbs.join(",")
+            }).then(res => {
+                console.log(res)
+            })
+        } else {
+            // 编辑文章
+        }
+        console.log(article)
+
+
+
+        setTimeout(() => {
+            newLoadings[index] = false;
+            setLoadings([...newLoadings])
+        }, 2000)
+
+    }
+
+    const changeSelect = (e) => {
+        console.log(e)
+        setType(String(e))
+    }
+
 
     return (
 
@@ -220,31 +328,33 @@ const Editors = (props) => {
                 </Breadcrumb.Item>
                 <Breadcrumb.Item>
                     <Link>
-                        {props.match.path == '/add' ? '添加文章' : '编辑文章'}
+                        {props.match.path == '/manage/add' ? '添加文章' : '编辑文章'}
                     </Link>
                 </Breadcrumb.Item>
             </Breadcrumb>
             <Card>
                 <Row align="middle" style={{ marginBottom: '20px' }}>
-                    <Col span={1}>文章标题</Col>
+                    <Col span={2}>文章标题</Col>
                     <Col span={9}>
-                        <Input placeholder="Basic usage" />
+                        <Input defaultValue={fillTitle} placeholder={fillTitle ? fillTitle : '请输入标题'} ref={title} />
                     </Col>
                 </Row>
                 <Row align="start">
-                    <Col span={1}>文章简介</Col>
-                    <Col span={23}>
-                        <TextArea showCount maxLength={100} onChange={onTextAreaChange} />
+                    <Col span={2}>文章简介</Col>
+                    <Col span={22}>
+                        <TextArea showCount maxLength={100} placeholder={fillContent ? fillContent : '请输入简介'} ref={content} />
                     </Col>
                 </Row>
 
                 <Row align="middle" style={{ marginBottom: '20px' }}>
-                    <Col span={1}>选择分类</Col>
+                    <Col span={2}>选择分类</Col>
                     <Select
                         showSearch
                         style={{ width: 200 }}
                         placeholder="选择分类"
                         optionFilterProp="children"
+                        onChange={(e) => changeSelect(e)}
+                        value={type == 1 ? '技术分享' : type == 2 ? '算法解析' : '程序人生'}
                     // onChange={onChange}
                     // onFocus={onFocus}
                     // onBlur={onBlur}
@@ -256,17 +366,20 @@ const Editors = (props) => {
                         <Option value="1">技术分享</Option>
                         <Option value="2">算法解析</Option>
                         <Option value="3">程序人生</Option>
-                    </Select>,
+                    </Select>
+                    {/* <Col style={{visibility: props.match.path.indexOf('/manage/edit') != -1 ? 'visible' : 'hidden'}} span={6} offset={2}>已选分类: {type == 1 ? '技术分享' : type == 2 ? '算法解析' : '程序人生' }</Col> */}
                 </Row>
                 <Row>
                     <Col span={24}>上传图片</Col>
                     <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        action= {baseURL + "upload"}
                         listType="picture-card"
                         fileList={fileList}
                         multiple
                         onPreview={handlePreview}
                         onChange={handleChange}
+                        data={{ alt: '图片描述' }}
+                        name="myFile"
                     >
                         {fileList.length >= 8 ? null : uploadButton}
                     </Upload>
@@ -280,10 +393,22 @@ const Editors = (props) => {
                     <img alt="example" style={{ width: '100%' }} src={previewImage} />
                 </Modal>
                 {/* 1、菜单栏与主题栏分离模式 */}
+                <Col span={2}>编辑文章</Col>
                 <div id="editBox">
-                    {/* <p>初始化的内容</p>
-                    <p>初始化的内容</p> */}
+                    {/* {editorContent + "<div>1121</div>"} */}
                 </div>
+
+                <Row justify="center">
+                    <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        loading={loadings[0]}
+                        onClick={() => enterLoading(0)}
+                        style={{ width: '100px', marginTop: '30px' }}
+                    >
+                        提交
+                    </Button>
+                </Row>
             </Card>
 
             <div dangerouslySetInnerHTML={{ __html: domString }} />

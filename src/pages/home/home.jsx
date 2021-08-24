@@ -14,8 +14,6 @@ import List from '../list/list'
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider, Footer } = Layout;
-// const rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
-const rootSubmenuKeys = ['sub1', 'sub2', 'sub3','sub4','sub5'];
 const Home = (props) => {
     const [openKeys, setOpenKeys] = useState([]);
     const [selectKeys, setSelectKeys] = useState(props.location.pathname);
@@ -25,7 +23,7 @@ const Home = (props) => {
 
     const user = memory.user
     if (!user || !user.username) {
-        props.history.push("/login")
+        props.history.push("/manage/login")
     }
 
     useEffect(() => {
@@ -54,25 +52,6 @@ const Home = (props) => {
                 )
             }
         })
-    }
-
-    const onOpenChange = keys => {
-        console.log(keys)
-        // 满足条件，返回第一个，不满足则undefined
-        const latestOpenKey = keys.find(key => openKeys.indexOf(key) === -1);
-        console.log(latestOpenKey)
-        console.log(rootSubmenuKeys.indexOf(latestOpenKey) === -1)
-        if (rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-            setOpenKeys(keys);
-            console.log(openKeys)
-        } else {
-            setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-        }
-    };
-    
-    const onItemClick = (item, key, keyPath, domEvent) => {
-        console.log(item, key, keyPath, domEvent)
-        setSelectKeys(item.key)
     }
 
 
@@ -164,13 +143,13 @@ const Home = (props) => {
                     >
                         <Switch>
                             {/* 默认匹配Mine组件 */}
-                            <Route path="/" exact component={Welcome}></Route>
+                            <Route path="/manage" exact component={Welcome}></Route>
                             {/* <Route path={`${props.match.path}mine`} component={Mine}></Route> */}
-                            <Route path={`${props.match.path}list`} component={List}></Route>
-                            <Route path={`${props.match.path}add`} component={Editors}></Route>
-                            <Route path={`${props.match.path}edit`} component={Editors}></Route>
+                            <Route path={`/manage/list`} component={List}></Route>
+                            <Route path={`/manage/add`} component={Editors}></Route>
+                            <Route path={`/manage/edit`} component={Editors}></Route>
                             
-                            <Redirect to="/"></Redirect>
+                            {/* <Redirect to="/manage"></Redirect> */}
                         </Switch>
                     </Content>
                 </Layout>

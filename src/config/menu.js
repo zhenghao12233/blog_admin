@@ -6,19 +6,21 @@ const menuList = [
         icon: <SettingOutlined />,
         children: [
             {
-                key: '/add',
-                title: '添加文章',
-                url: '/add',
-                icon: <FormOutlined />,
-            },{
-                key: '/edit',
+                key: '/manage/add',
                 title: '编辑文章',
-                url: '/edit',
-                icon: <EditOutlined />,
-            },{
-                key: '/list',
+                url: '/manage/add',
+                icon: <FormOutlined />,
+            },
+            // {
+            //     key: '/manage/edit',
+            //     title: '编辑文章',
+            //     url: '/manage/edit',
+            //     icon: <EditOutlined />,
+            // },
+            {
+                key: '/manage/list',
                 title: '文章列表',
-                url: '/list',
+                url: '/manage/list',
                 icon: <UnorderedListOutlined />
             }
         ]

@@ -7,7 +7,7 @@ import menuList from '../../config/menu'
 const { Meta } = Card;
 const { SubMenu } = Menu;
 
-// 确保打开唯一map写法
+// 确保打开唯一map写法, // 存储第一位的key
 // let rootSubmenuKeys = []
 // menuList.map((item,index) => {
 //     rootSubmenuKeys.push(item.key)

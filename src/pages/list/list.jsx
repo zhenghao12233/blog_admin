@@ -116,46 +116,49 @@ import React, { useEffect, useState, useRef } from 'react';
 //     );
 // }
 
-import { Table, Input, Button, Space, Popconfirm, Breadcrumb } from 'antd';
+import { Table, Input, Button, Space, Popconfirm, Breadcrumb, message } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { getArticleList, deleteArticle } from '../../api/ajax'
+import qs from 'querystring'
+
 const { Link, BrowserRouter, Route, Switch, Redirect, HashRouter } = require('react-router-dom')
 
 class List extends React.Component {
     state = {
         data: [
-            {
-                key: '1',
-                id: 1,
-                title: 'John Brown',
-                date: 32,
-                type: '技术分享',
-                content: 'New York No. 1 Lake Park',
-            },
-            {
-                key: '2',
-                id: 2,
-                title: 'Joe Black',
-                date: 42,
-                type: '程序人生',
-                content: 'London No. 1 Lake Park',
-            },
-            {
-                key: '3',
-                id: 3,
-                title: 'Jim Green',
-                date: 32,
-                type: '算法解析',
-                content: 'Sidney No. 1 Lake Park',
-            },
-            {
-                key: '4',
-                id: 4,
-                title: 'Disabled User',
-                date: 32,
-                type: '程序人生',
-                content: 'Not Expandable',
-            },
+            // {
+            //     key: '1',
+            //     id: 1,
+            //     title: 'John Brown',
+            //     date: 32,
+            //     type: '技术分享',
+            //     content: 'New York No. 1 Lake Park',
+            // },
+            // {
+            //     key: '2',
+            //     id: 2,
+            //     title: 'Joe Black',
+            //     date: 42,
+            //     type: '程序人生',
+            //     content: 'London No. 1 Lake Park',
+            // },
+            // {
+            //     key: '3',
+            //     id: 3,
+            //     title: 'Jim Green',
+            //     date: 32,
+            //     type: '算法解析',
+            //     content: 'Sidney No. 1 Lake Park',
+            // },
+            // {
+            //     key: '4',
+            //     id: 4,
+            //     title: 'Disabled User',
+            //     date: 32,
+            //     type: '程序人生',
+            //     content: 'Not Expandable',
+            // },
         ],
         searchText: '',
         searchedColumn: '',
@@ -169,8 +172,48 @@ class List extends React.Component {
                 // Column configuration not to be checked
                 title: record.title,
             }),
+        },
+        query: {
+            page: 1,
+            size: 10,
+            total: 80,
         }
     };
+
+    componentWillMount() {
+        
+        this.getListFun()
+    }
+    componentDidMount() {
+        // console.log("query参数",qs.parse(this.props.location.search.substr(1)))
+    }
+
+    getListFun() {
+        getArticleList('findTitleOrContentOrType',{
+            title: '',
+            content: '',
+            page: this.state.query.page,
+            size: this.state.query.size
+        }).then(res => {
+            console.log(res)
+            res.data.list.forEach(item => {
+                item['key'] = item.id
+                if (item.type == 1) {
+                    item['class'] = '技术分享'
+                }else if (item.type == 2) {
+                    item['class'] = '算法解析'
+                }else {
+                    item['class'] = '程序人生'
+                }
+            })
+            const query = {...this.state.query}
+            query.total = res.data.total
+            this.setState({
+                data: res.data.list,
+                query
+            })
+        })
+    }
 
     getColumnSearchProps = dataIndex => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -253,6 +296,26 @@ class List extends React.Component {
 
     onPageChange = (page, pageSize) => {
         console.log(page, pageSize)
+        this.getListFun(page,pageSize)
+    }
+
+    deleteFun = (id) => {
+        console.log("需要删除的id",id)
+        deleteArticle('deleteArticle',{
+            id
+        }).then(res => {
+            console.log(res)
+            if (res.code == 0) {
+                message.success("删除成功")
+                this.getListFun()
+            }else{
+                message.error("删除失败")
+            }
+        })
+    }
+
+    jumpEdit = (id) => {
+        this.props.history.push("/manage/edit?id=" + id)
     }
 
     render() {
@@ -263,21 +326,23 @@ class List extends React.Component {
                 dataIndex: 'id',
                 key: 'id',
                 fixed: 'left',
+                width: '5%'
             },
             {
                 align: 'center',
                 title: '标题',
                 dataIndex: 'title',
                 key: 'title',
-                width: '30%',
+                width: '20%',
                 fixed: 'left',
                 ...this.getColumnSearchProps('title'),
             }, {
                 align: 'center',
                 title: '类别',
-                dataIndex: 'type',
-                key: 'type',
-                ...this.getColumnSearchProps('type'),
+                dataIndex: 'class',
+                key: 'class',
+                ...this.getColumnSearchProps('class'),
+                width: '10%'
             },
             {
                 align: 'center',
@@ -304,8 +369,8 @@ class List extends React.Component {
                     <Space size="middle">
                         {/* <a>Invite {record.name}</a>
                         <a>Invite {record.name}</a> */}
-                        <Button type="primary" shape="circle" icon={<EditOutlined />} size="middle" />
-                        <Popconfirm title={`确定删除${record.name}吗`} okText="Yes" cancelText="No">
+                        <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => this.jumpEdit(record.id)} size="middle" />
+                        <Popconfirm title={`确定删除${record.name}吗`} okText="Yes" cancelText="No" onConfirm={() => this.deleteFun(record.id)}>
                             <Button type="danger" shape="circle" icon={<DeleteOutlined />} size="middle" />
                         </Popconfirm>
                         {/* <a>{JSON.stringify(text)}</a> */}
@@ -346,7 +411,7 @@ class List extends React.Component {
                     columns={columns}
                     scroll={{ x: 1500, y: 900 }}
                     dataSource={this.state.data}
-                    pagination={{ total: 85, defaultPageSize: 20, onChange: this.onPageChange }}
+                    pagination={{ total: this.state.query.total, defaultPageSize: this.state.query.size, onChange: this.onPageChange }}
                 />
             </div>
         )

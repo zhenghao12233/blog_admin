@@ -8,18 +8,17 @@ const login = (props) => {
     const user = memory.user
     console.log(user)
     if (user && user.username) {
-        props.history.push("/")
+        props.history.push("/manage")
     }
 
     const onFinish = (values) => {
         // console.log(props)
         // console.log('Success:', values);
-        console.log(values.username == "郑好" && values.password == "123")
         if (values.username == "zhenghao" && values.password == "123") {
             message.success("登录成功")
             storage.setStorage("user",{"username": "zhenghao"})
             memory.user = storage.getStorage("user")
-            props.history.push("/")
+            props.history.push("/manage")
             
         }
     };
