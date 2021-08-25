@@ -2,13 +2,17 @@ import axios from 'axios';
 import { message } from 'antd';
 
 axios.defaults.baseURL = 'http://47.108.172.171:8082/'
+// axios.defaults.baseURL = 'http://localhost:8082/'
+
 axios.interceptors.request.use(
     (config) => {
         console.log("post参数",config.data)
         console.log("get参数",config.params)
+        console.log(config)
         config.headers = {
             "Content-Type": "application/json",
         };
+        
         return config;
     },
     (error) => {
@@ -34,11 +38,15 @@ axios.interceptors.response.use(
 
 
 export const ajax = (url, data = {}, method = 'get') => {
-    if (method.includes('get', 'delete','put')) {
+    if (method.includes('get', 'delete')) {
         return axios[method](url, { params: data })
     } else {
         console.log("data", data)
-        return axios[method](url, data)
+        return axios[method](url, data,{
+            headers:{
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        })
     }
 
 }
