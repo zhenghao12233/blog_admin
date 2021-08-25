@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { message } from 'antd';
 
-axios.defaults.baseURL = 'http://localhost:8082/'
+axios.defaults.baseURL = 'http://47.108.172.171:8082/'
 axios.interceptors.request.use(
     (config) => {
         console.log("post参数",config.data)
@@ -34,7 +34,7 @@ axios.interceptors.response.use(
 
 
 export const ajax = (url, data = {}, method = 'get') => {
-    if (method.includes('get', 'delete')) {
+    if (method.includes('get', 'delete','put')) {
         return axios[method](url, { params: data })
     } else {
         console.log("data", data)

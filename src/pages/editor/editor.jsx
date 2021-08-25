@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb, Tag, message, Row, Col, Input, Card, Select, 
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import E from 'wangeditor'
 import { baseURL } from '../../config/setting'
-import { saveArticle, findAllById } from '../../api/ajax'
+import { saveArticle, findAllById, updateArticle } from '../../api/ajax'
 import qs from 'querystring'
 
 const { Link, BrowserRouter, Route, Switch, Redirect, HashRouter } = require('react-router-dom')
@@ -219,7 +219,7 @@ const Editors = (props) => {
                         pre.push(obj)
                         return pre
                     },[])
-
+                    console.log("thumbs",thumbs)
                     setFileLIst(thumbs)
                     editor.txt.html(res.data.article.article)
                 } else {
@@ -280,12 +280,12 @@ const Editors = (props) => {
         let thumbs = fileList.reduce((pre, cur) => {
             console.log(pre)
             if (cur.status == "done") {
-                pre.push(baseURL + "uploadFiles/" + cur.name)
+                pre.push("http://47.108.172.171:5000/" + "public/" + cur.name)
             }
             return pre
         }, [])
 
-        console.log(thumbs)
+        console.log("thumbs",thumbs)
         console.log(title.current.input.defaultValue)
         console.log(content.current.resizableTextArea.textArea.defaultValue)
         if (props.match.path == '/manage/add') {
@@ -298,9 +298,29 @@ const Editors = (props) => {
                 thumb: thumbs.join(",")
             }).then(res => {
                 console.log(res)
+                if(res.code == 0) {
+                    message.success("添加成功")
+                }else {
+                    message.error("添加失败")
+                }
             })
         } else {
             // 编辑文章
+            updateArticle('updateArticle',{
+                id: aid,
+                title: title.current.input.defaultValue,
+                content: content.current.resizableTextArea.textArea.defaultValue,
+                article: article,
+                type: type,
+                thumb: thumbs.join(",")
+            }).then(res => {
+                console.log(res)
+                if(res.code == 0) {
+                    message.success("修改成功")
+                }else {
+                    message.error("修改失败")
+                }
+            })
         }
         console.log(article)
 

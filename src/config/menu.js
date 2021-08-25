@@ -7,7 +7,7 @@ const menuList = [
         children: [
             {
                 key: '/manage/add',
-                title: '编辑文章',
+                title: '添加文章',
                 url: '/manage/add',
                 icon: <FormOutlined />,
             },

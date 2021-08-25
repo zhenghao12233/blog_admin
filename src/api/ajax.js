@@ -25,6 +25,9 @@ export const getArticleList = (url ,data ) => {
         url: updateArticle
         参数：[id,title,content,article,thumb,type]
 */
+export const updateArticle = (url, data) => {
+    return ajax(url,data)
+}
 
 /* 
     删除文章

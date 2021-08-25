@@ -296,7 +296,15 @@ class List extends React.Component {
 
     onPageChange = (page, pageSize) => {
         console.log(page, pageSize)
-        this.getListFun(page,pageSize)
+        const obj = {...this.query}
+        obj.page = page
+        obj.size = pageSize
+        this.setState({
+            query: obj
+        }, () => {
+            this.getListFun()
+        })
+        
     }
 
     deleteFun = (id) => {
