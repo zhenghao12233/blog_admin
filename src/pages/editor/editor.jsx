@@ -65,7 +65,7 @@ const Editors = (props) => {
     const content = useRef(null)
     const [fillContent, setFillContent] = useState("")
     const [article, setArticle] = useState("")
-    const [type, setType] = useState([])
+    const [type, setType] = useState(3)
 
     useEffect(() => {
         const query = qs.parse(props.location.search.substr(1))
@@ -305,6 +305,15 @@ const Editors = (props) => {
                 }
             })
         } else {
+            const obj = {
+                id: aid,
+                title: title.current.input.defaultValue,
+                content: content.current.resizableTextArea.textArea.defaultValue,
+                article: article,
+                type: type,
+                thumb: thumbs.join(",")
+            }
+            console.log("obj",obj)
             // 编辑文章
             updateArticle('updateArticle',{
                 id: aid,
@@ -322,7 +331,7 @@ const Editors = (props) => {
                 }
             })
         }
-        console.log(article)
+        console.log("article",article)
 
 
 
