@@ -5,6 +5,8 @@ import E from 'wangeditor'
 import { baseURL } from '../../config/setting'
 import { saveArticle, findAllById, updateArticle } from '../../api/ajax'
 import qs from 'querystring'
+import hljs from 'highlight.js'
+import 'highlight.js/styles/monokai-sublime.css'
 
 const { Link, BrowserRouter, Route, Switch, Redirect, HashRouter } = require('react-router-dom')
 const { TextArea } = Input;
@@ -175,6 +177,7 @@ const Editors = (props) => {
             '#1c487f',
             '#800080'
         ]
+        editor.highlight = hljs
         editor.config.uploadImgShowBase64 = true
         editor.config.uploadImgServer =  baseURL + 'upload'
         editor.config.uploadImgParams = {
