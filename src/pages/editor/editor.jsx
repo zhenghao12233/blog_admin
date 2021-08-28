@@ -69,6 +69,13 @@ const Editors = (props) => {
     const [article, setArticle] = useState("")
     const [type, setType] = useState(3)
 
+
+    const formatCode = (html) => {
+        var newContent = html.replace(/<pre[^>]*>/gi, '<pre style="background: #454545;">');
+
+        return newContent;
+    }
+
     useEffect(() => {
         const query = qs.parse(props.location.search.substr(1))
         console.log("query参数", query)
@@ -108,11 +115,16 @@ const Editors = (props) => {
         editor.config.onchange = html => {
             console.log(111)
             // 获取文本
-            console.log(editor.txt.text())
+            // console.log(editor.txt.text())
             // 获取html
-            console.log(editor.txt.html())
-            setArticle(editor.txt.html())
+            // console.log(editor.txt.html())
+            
+            let aaa =formatCode(editor.txt.html())
+            console.log(aaa)
+            setArticle(aaa)
             setDomString(editor.txt.html())
+
+            
 
             // 获取json
             // editor.txt.getJSON()
@@ -175,7 +187,9 @@ const Editors = (props) => {
             '#000000',
             '#880000',
             '#1c487f',
-            '#800080'
+            '#800080',
+            '#ffffff',
+            "#75715e"
         ]
         editor.highlight = hljs
         editor.config.uploadImgShowBase64 = true
@@ -212,17 +226,20 @@ const Editors = (props) => {
                     //     url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
                     // },
                     const thumbs = res.data.article.thumb.split(",").reduce((pre,cur,index) => {
-                        let obj = {
-                            uid: '-' + index,
-                            name: cur.substring(cur.indexOf("uploadFiles") + 12),
-                            status: 'done',
-                            url: cur
+                        if (cur.url) {
+                            let obj = {
+                                uid: '-' + index,
+                                name: cur.substring(cur.indexOf("uploadFiles") + 12),
+                                status: 'done',
+                                url: cur
+                            }
+                            console.log(obj)
+                            pre.push(obj)
                         }
-                        console.log(obj)
-                        pre.push(obj)
+                        
                         return pre
                     },[])
-                    console.log("thumbs",thumbs)
+                    console.log("thumbs_xxx",thumbs)
                     setFileLIst(thumbs)
                     editor.txt.html(res.data.article.article)
                 } else {
@@ -294,8 +311,8 @@ const Editors = (props) => {
         if (props.match.path == '/manage/add') {
             // 添加文章
             saveArticle('saveArticle', {
-                title: title.current.input.defaultValue,
-                content: content.current.resizableTextArea.textArea.defaultValue,
+                title: title.current.input.defaultValue || fillTitle,
+                content: content.current.resizableTextArea.textArea.defaultValue || fillContent,
                 article: article,
                 type: type,
                 thumb: thumbs.join(",")
@@ -308,20 +325,11 @@ const Editors = (props) => {
                 }
             })
         } else {
-            const obj = {
-                id: aid,
-                title: title.current.input.defaultValue,
-                content: content.current.resizableTextArea.textArea.defaultValue,
-                article: article,
-                type: type,
-                thumb: thumbs.join(",")
-            }
-            console.log("obj",obj)
             // 编辑文章
             updateArticle('updateArticle',{
                 id: aid,
-                title: title.current.input.defaultValue,
-                content: content.current.resizableTextArea.textArea.defaultValue,
+                title: title.current.input.defaultValue || fillTitle,
+                content: content.current.resizableTextArea.textArea.defaultValue || fillContent,
                 article: article,
                 type: type,
                 thumb: thumbs.join(",")
@@ -374,7 +382,7 @@ const Editors = (props) => {
                 <Row align="start">
                     <Col span={2}>文章简介</Col>
                     <Col span={22}>
-                        <TextArea showCount maxLength={100} placeholder={fillContent ? fillContent : '请输入简介'} ref={content} />
+                        <TextArea showCount maxLength={500} placeholder={fillContent ? fillContent : '请输入简介'} ref={content} />
                     </Col>
                 </Row>
 
@@ -443,7 +451,7 @@ const Editors = (props) => {
                 </Row>
             </Card>
 
-            <div dangerouslySetInnerHTML={{ __html: domString }} />
+            <div dangerouslySetInnerHTML={{ __html: article }} />
 
         </div>
 

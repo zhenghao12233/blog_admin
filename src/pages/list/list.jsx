@@ -128,22 +128,6 @@ class List extends React.Component {
     state = {
         data: [
             // {
-            //     key: '1',
-            //     id: 1,
-            //     title: 'John Brown',
-            //     date: 32,
-            //     type: '技术分享',
-            //     content: 'New York No. 1 Lake Park',
-            // },
-            // {
-            //     key: '2',
-            //     id: 2,
-            //     title: 'Joe Black',
-            //     date: 42,
-            //     type: '程序人生',
-            //     content: 'London No. 1 Lake Park',
-            // },
-            // {
             //     key: '3',
             //     id: 3,
             //     title: 'Jim Green',
